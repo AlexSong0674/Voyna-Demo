@@ -1,0 +1,26 @@
+{
+  "name": "voyna-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "알토대학원 벤처 스타트업 수업 발표 데모용 웹 앱.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "vitest": "^1.6.1"
+  },
+  "dependencies": {
+    "firebase": "^10.14.1"
+  }
+}
