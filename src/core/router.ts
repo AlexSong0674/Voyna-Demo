@@ -34,7 +34,7 @@ export function navigate(tab: Tab): void {
 
   switch (tab) {
     case 'home':   renderHome(pageContainer); break;
-    case 'map':    renderMap(pageContainer); break;
+    case 'map':    void renderMap(pageContainer); break;
     case 'badges': renderBadges(pageContainer); break;
     case 'more':   renderMore(pageContainer); break;
   }
