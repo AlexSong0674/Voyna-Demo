@@ -48,3 +48,16 @@ button { font-family: inherit; cursor: pointer; }
   from { transform: translate(-50%, -100px); opacity: 0; }
   to { transform: translate(-50%, 0); opacity: 1; }
 }
+
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h);
+  background: white; border-top: 1px solid #e5e7eb;
+  display: flex; z-index: 50;
+}
+.tabbar button {
+  flex: 1; border: none; background: transparent; font-size: 22px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--voyna-muted); gap: 2px; padding: 6px;
+}
+.tabbar button span { font-size: 11px; }
+.tabbar button.active { color: var(--voyna-primary); }
