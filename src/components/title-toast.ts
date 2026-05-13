@@ -1,4 +1,11 @@
-// Stub — Phase 7 will replace with real toast
-export function showTitleToast(_title: string): void {
-  // no-op until Phase 7
+export function showTitleToast(title: string): void {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `🏆 새 칭호 획득: <strong>${title}</strong>`;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = 'opacity 0.4s';
+    t.style.opacity = '0';
+    setTimeout(() => t.remove(), 400);
+  }, 3000);
 }
