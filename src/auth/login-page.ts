@@ -1,6 +1,6 @@
 import { loginWithGoogle } from './firebase';
 
-export function renderLoginPage(root: HTMLElement, onSuccess: () => void): void {
+export function renderLoginPage(root: HTMLElement, _onSuccess: () => void): void {
   root.innerHTML = `
     <div class="login-page">
       <div class="login-card">
@@ -39,10 +39,16 @@ export function renderLoginPage(root: HTMLElement, onSuccess: () => void): void 
   `;
 
   document.getElementById('google-login')!.addEventListener('click', async () => {
+    const btn = document.getElementById('google-login') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = '로그인 중...';
     try {
       await loginWithGoogle();
-      onSuccess();
+      // redirect 방식: 이 줄 이후 페이지가 Google로 이동했다가 돌아옴.
+      // 돌아왔을 때 main.ts의 handleRedirectResult가 처리.
     } catch (e) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="g-icon">G</span> Google로 시작하기';
       alert('로그인 실패: ' + (e as Error).message);
     }
   });

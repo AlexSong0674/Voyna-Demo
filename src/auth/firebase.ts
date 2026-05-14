@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut,
-  onAuthStateChanged, type User,
+  getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult,
+  signOut, onAuthStateChanged, type User,
 } from 'firebase/auth';
 import { loadState, saveState } from '@/core/state';
 
@@ -18,9 +18,7 @@ const app = initializeApp(config);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export async function loginWithGoogle(): Promise<User> {
-  const result = await signInWithPopup(auth, provider);
-  const u = result.user;
+function persistUser(u: User): void {
   const state = loadState();
   state.user = {
     uid: u.uid,
@@ -29,7 +27,23 @@ export async function loginWithGoogle(): Promise<User> {
     photoURL: u.photoURL ?? '',
   };
   saveState(state);
-  return u;
+}
+
+export async function loginWithGoogle(): Promise<void> {
+  await signInWithRedirect(auth, provider);
+}
+
+export async function handleRedirectResult(): Promise<User | null> {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result?.user) {
+      persistUser(result.user);
+      return result.user;
+    }
+  } catch (e) {
+    console.error('Redirect login failed:', e);
+  }
+  return null;
 }
 
 export async function logout(): Promise<void> {
@@ -40,7 +54,10 @@ export async function logout(): Promise<void> {
 }
 
 export function onAuth(cb: (u: User | null) => void): () => void {
-  return onAuthStateChanged(auth, cb);
+  return onAuthStateChanged(auth, (u) => {
+    if (u) persistUser(u);
+    cb(u);
+  });
 }
 
 export function currentUser(): User | null {
