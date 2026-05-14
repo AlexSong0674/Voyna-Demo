@@ -1,6 +1,6 @@
 import { getBadges } from '@/core/catalog';
 import { loadState } from '@/core/state';
-import { badgeImageSrc } from '@/components/badge-icon';
+import { badgeMedallionHTML } from '@/components/badge-icon';
 
 const GRADE_ORDER = { special: 0, premier: 1, rare: 2, common: 3 } as const;
 const GRADE_COLOR: Record<string, string> = {
@@ -25,11 +25,9 @@ export function renderBadges(root: HTMLElement): void {
     <div class="bg-grid">
       ${badges.map((b) => {
         const got = obtained.has(b.id);
-        const { src, fallback } = badgeImageSrc(b, got);
         return `
           <div class="bg-card ${got ? 'got' : 'locked'}">
-            <img src="${src}"
-                 onerror="this.onerror=null; this.src='${fallback}'"/>
+            <div class="bg-medallion-wrap">${badgeMedallionHTML(b, got)}</div>
             <div class="bg-name">${got ? b.name : '???'}</div>
             <div class="bg-grade" style="color:${got ? GRADE_COLOR[b.grade] : '#9ca3af'}">${b.grade}</div>
           </div>`;
@@ -45,8 +43,9 @@ export function renderBadges(root: HTMLElement): void {
       .bg-card {
         background: white; border-radius: 12px; padding: 12px;
         text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        display: flex; flex-direction: column; align-items: center;
       }
-      .bg-card img { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
+      .bg-medallion-wrap { width: 72px; margin-bottom: 6px; }
       .bg-card.locked { opacity: 0.85; }
       .bg-name { font-size: 12px; font-weight: 600; line-height: 1.2; min-height: 28px; }
       .bg-grade { font-size: 10px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }

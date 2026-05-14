@@ -61,3 +61,60 @@ button { font-family: inherit; cursor: pointer; }
 }
 .tabbar button span { font-size: 11px; }
 .tabbar button.active { color: var(--voyna-primary); }
+
+/* Medallion (photo + frame composition) */
+.medallion {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  padding: 5%;
+  background: var(--ring-grad, linear-gradient(135deg, #9ca3af, #6b7280));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 2px rgba(255,255,255,0.4);
+  overflow: hidden;
+}
+.medallion .medallion-photo,
+.medallion .medallion-illust {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: white;
+  position: relative;
+  z-index: 1;
+}
+.medallion::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 22%;
+  width: 30%;
+  height: 12%;
+  background: rgba(255,255,255,0.45);
+  border-radius: 50%;
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 2;
+}
+.medallion.grade-special {
+  --ring-grad: linear-gradient(135deg, #fde68a 0%, #b8860b 45%, #fbbf24 100%);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.35), 0 2px 8px rgba(0,0,0,0.18);
+}
+.medallion.grade-rare {
+  --ring-grad: linear-gradient(135deg, #c4b5fd 0%, #6b21a8 45%, #a855f7 100%);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3), 0 2px 8px rgba(0,0,0,0.15);
+}
+.medallion.grade-common {
+  --ring-grad: linear-gradient(135deg, #93c5fd 0%, #1e40af 45%, #3b82f6 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.medallion.grade-premier {
+  --ring-grad: linear-gradient(135deg, #fca5a5 0%, #b91c1c 45%, #ef4444 100%);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35), 0 2px 8px rgba(0,0,0,0.18);
+}
+.medallion.locked {
+  --ring-grad: linear-gradient(135deg, #d1d5db 0%, #6b7280 50%, #9ca3af 100%);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.medallion.locked::after { display: none; }

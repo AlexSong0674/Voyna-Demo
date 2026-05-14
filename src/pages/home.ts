@@ -2,7 +2,7 @@ import { loadState } from '@/core/state';
 import { xpToNextLevel } from '@/core/levels';
 import { getBadge } from '@/core/catalog';
 import { navigate } from '@/core/router';
-import { badgeImageSrc } from '@/components/badge-icon';
+import { badgeMedallionHTML } from '@/components/badge-icon';
 
 export function renderHome(root: HTMLElement): void {
   const state = loadState();
@@ -39,10 +39,9 @@ export function renderHome(root: HTMLElement): void {
             if (!b) {
               return `<div class="recent-item"><div><div class="r-name">${o.badgeId}</div></div></div>`;
             }
-            const { src, fallback } = badgeImageSrc(b, true);
             return `
               <div class="recent-item">
-                <img src="${src}" onerror="this.onerror=null; this.src='${fallback}'"/>
+                <div class="recent-medallion">${badgeMedallionHTML(b, true)}</div>
                 <div>
                   <div class="r-name">${b.name}</div>
                   <div class="r-grade">${b.grade}</div>
@@ -76,7 +75,7 @@ export function renderHome(root: HTMLElement): void {
         background: white; border-radius: 10px; padding: 10px;
         display: flex; gap: 12px; align-items: center;
       }
-      .recent-item img { width: 48px; height: 48px; border-radius: 50%; }
+      .recent-medallion { width: 48px; flex-shrink: 0; }
       .r-name { font-weight: 600; }
       .r-grade { font-size: 12px; color: var(--voyna-muted); }
       .empty { color: var(--voyna-muted); font-size: 14px; }
