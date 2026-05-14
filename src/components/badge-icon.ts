@@ -206,61 +206,36 @@ export function illustrationSVGContent(badge: Badge): string {
   </svg>`;
 }
 
-function lockedIllustration(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="medallion-illust">
-    <defs>
-      <radialGradient id="lk-bg" cx="50%" cy="40%">
-        <stop offset="0" stop-color="#f3f4f6"/>
-        <stop offset="1" stop-color="#9ca3af"/>
-      </radialGradient>
-    </defs>
-    <circle cx="50" cy="50" r="50" fill="url(#lk-bg)"/>
-    <circle cx="50" cy="50" r="40" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
-    <path d="M 40 48 V 42 a 10 10 0 0 1 20 0 V 48" fill="none" stroke="#4b5563" stroke-width="3.5"/>
-    <rect x="36" y="48" width="28" height="22" rx="3" fill="#4b5563"/>
-    <circle cx="50" cy="58" r="2.5" fill="#e5e7eb"/>
-    <rect x="49" y="59" width="2" height="6" fill="#e5e7eb"/>
-  </svg>`;
-}
-
 /**
  * Renders a complete medallion HTML block for innerHTML insertion.
- * - Locked: gray padlock SVG
- * - Polished + photo available: real photo with onerror fallback to illustration SVG
- * - Otherwise: stylized illustration SVG
- *
- * Caller must include `.medallion` CSS rules (added to main.css).
+ * - Always shows the badge's own design (photo if available, else illustration)
+ * - When locked: keeps grade-colored ring but applies grayscale + lock overlay via CSS
+ * - Caller must include `.medallion` CSS rules (added to main.css).
  */
 export function badgeMedallionHTML(badge: Badge, obtained: boolean, size?: number): string {
   const sizeAttr = size ? `style="width:${size}px;height:${size}px"` : '';
-  if (!obtained) {
-    return `<div class="medallion locked" ${sizeAttr}>${lockedIllustration()}</div>`;
-  }
   const gradeClass = `grade-${badge.grade}`;
+  const lockedClass = obtained ? '' : 'locked';
   const illust = illustrationSVGContent(badge);
-  // Escape inner content for use in onerror attribute (single quotes minimal safe).
   const escapedFallback = illust.replace(/'/g, "\\'").replace(/\n/g, '');
   if (badge.is_polished) {
-    return `<div class="medallion ${gradeClass}" ${sizeAttr}>
+    return `<div class="medallion ${gradeClass} ${lockedClass}" ${sizeAttr}>
       <img class="medallion-photo" src="${badge.image}" alt="${badge.name}"
            onerror="this.outerHTML='${escapedFallback}'"/>
     </div>`;
   }
-  return `<div class="medallion ${gradeClass}" ${sizeAttr}>${illust}</div>`;
+  return `<div class="medallion ${gradeClass} ${lockedClass}" ${sizeAttr}>${illust}</div>`;
 }
 
 // Backwards-compatible helpers that some callers may still use.
 export function badgeImageSrc(badge: Badge, obtained: boolean): { src: string; fallback: string } {
-  // Returns a data URI of the inline SVG illustration (no photo composition).
-  const svgFor = (b: Badge, locked: boolean) => {
-    const inner = locked ? lockedIllustration() : illustrationSVGContent(b);
-    return 'data:image/svg+xml;utf8,' + encodeURIComponent(inner.replace(/\s+/g, ' ').trim());
-  };
+  const svgFor = (b: Badge) =>
+    'data:image/svg+xml;utf8,' + encodeURIComponent(illustrationSVGContent(b).replace(/\s+/g, ' ').trim());
   if (!obtained) {
-    const s = svgFor(badge, true);
+    const s = svgFor(badge);
     return { src: s, fallback: s };
   }
-  const illust = svgFor(badge, false);
+  const illust = svgFor(badge);
   if (badge.is_polished) {
     return { src: badge.image, fallback: illust };
   }
