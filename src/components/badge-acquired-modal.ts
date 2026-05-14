@@ -1,4 +1,5 @@
 import type { Badge } from '@/core/catalog';
+import { badgeImageSrc } from './badge-icon';
 
 const GRADE_STYLE: Record<string, { color: string; label: string; glow: string }> = {
   special: { color: '#d4a017', label: '특별', glow: '0 0 60px rgba(212,160,23,0.7)' },
@@ -10,13 +11,14 @@ const GRADE_STYLE: Record<string, { color: string; label: string; glow: string }
 export function showBadgeAcquired(badge: Badge): Promise<void> {
   return new Promise((resolve) => {
     const style = GRADE_STYLE[badge.grade] ?? GRADE_STYLE.common!;
+    const { src, fallback } = badgeImageSrc(badge, true);
     const backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop';
     backdrop.innerHTML = `
       <div class="modal badge-acquired" style="border:3px solid ${style.color}; box-shadow: ${style.glow}, 0 12px 40px rgba(0,0,0,0.3);">
         <div class="ba-grade" style="color:${style.color}">✨ ${style.label} 배지 획득 ✨</div>
-        <img src="${badge.image}" alt="${badge.name}" class="ba-img"
-             onerror="this.src='/Voyna-Demo/badges/locked.png'"/>
+        <img src="${src}" alt="${badge.name}" class="ba-img"
+             onerror="this.onerror=null; this.src='${fallback}'"/>
         <h2 class="ba-name">${badge.name}</h2>
         <p class="ba-desc">${badge.description}</p>
         <div class="ba-xp">+${badge.xp} XP</div>

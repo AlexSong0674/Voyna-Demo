@@ -74,7 +74,7 @@ export async function renderMap(root: HTMLElement): Promise<void> {
     });
     window.kakao.maps.event.addListener(marker, 'click', () => {
       iw.open(mapInstance, marker);
-      void tryAcquireBadgeAt({ lat: loc.lat, lng: loc.lng });
+      // 핀 클릭은 정보창만 표시. 배지 획득은 텔레포트 또는 실제 GPS 도착으로만.
     });
   }
 

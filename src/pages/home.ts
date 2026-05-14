@@ -2,6 +2,7 @@ import { loadState } from '@/core/state';
 import { xpToNextLevel } from '@/core/levels';
 import { getBadge } from '@/core/catalog';
 import { navigate } from '@/core/router';
+import { badgeImageSrc } from '@/components/badge-icon';
 
 export function renderHome(root: HTMLElement): void {
   const state = loadState();
@@ -35,12 +36,16 @@ export function renderHome(root: HTMLElement): void {
           ? '<p class="empty">아직 획득한 배지가 없어요. 맵 탭에서 탐험을 시작해보세요!</p>'
           : recent.map((o) => {
             const b = getBadge(o.badgeId);
+            if (!b) {
+              return `<div class="recent-item"><div><div class="r-name">${o.badgeId}</div></div></div>`;
+            }
+            const { src, fallback } = badgeImageSrc(b, true);
             return `
               <div class="recent-item">
-                <img src="${b?.image ?? ''}" onerror="this.src='/Voyna-Demo/badges/locked.png'"/>
+                <img src="${src}" onerror="this.onerror=null; this.src='${fallback}'"/>
                 <div>
-                  <div class="r-name">${b?.name ?? o.badgeId}</div>
-                  <div class="r-grade">${b?.grade ?? ''}</div>
+                  <div class="r-name">${b.name}</div>
+                  <div class="r-grade">${b.grade}</div>
                 </div>
               </div>`;
           }).join('')}

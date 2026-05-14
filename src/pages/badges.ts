@@ -1,5 +1,6 @@
 import { getBadges } from '@/core/catalog';
 import { loadState } from '@/core/state';
+import { badgeImageSrc } from '@/components/badge-icon';
 
 const GRADE_ORDER = { special: 0, premier: 1, rare: 2, common: 3 } as const;
 const GRADE_COLOR: Record<string, string> = {
@@ -24,10 +25,11 @@ export function renderBadges(root: HTMLElement): void {
     <div class="bg-grid">
       ${badges.map((b) => {
         const got = obtained.has(b.id);
+        const { src, fallback } = badgeImageSrc(b, got);
         return `
           <div class="bg-card ${got ? 'got' : 'locked'}">
-            <img src="${got ? b.image : '/Voyna-Demo/badges/locked.png'}"
-                 onerror="this.src='/Voyna-Demo/badges/locked.png'"/>
+            <img src="${src}"
+                 onerror="this.onerror=null; this.src='${fallback}'"/>
             <div class="bg-name">${got ? b.name : '???'}</div>
             <div class="bg-grade" style="color:${got ? GRADE_COLOR[b.grade] : '#9ca3af'}">${b.grade}</div>
           </div>`;
@@ -44,9 +46,8 @@ export function renderBadges(root: HTMLElement): void {
         background: white; border-radius: 12px; padding: 12px;
         text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       }
-      .bg-card img { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 6px; }
-      .bg-card.locked img { filter: grayscale(1) opacity(0.4); }
-      .bg-card.locked { opacity: 0.7; }
+      .bg-card img { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
+      .bg-card.locked { opacity: 0.85; }
       .bg-name { font-size: 12px; font-weight: 600; line-height: 1.2; min-height: 28px; }
       .bg-grade { font-size: 10px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
