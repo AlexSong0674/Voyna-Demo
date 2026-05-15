@@ -9,6 +9,7 @@ export function renderLoginPage(root: HTMLElement, _onSuccess: () => void): void
         <button id="google-login" class="google-btn">
           <span class="g-icon">G</span> Google로 시작하기
         </button>
+        <div id="login-err" class="login-err"></div>
         <p class="hint">데모용 빌드입니다.</p>
       </div>
     </div>
@@ -29,27 +30,42 @@ export function renderLoginPage(root: HTMLElement, _onSuccess: () => void): void
         display: flex; align-items: center; justify-content: center; gap: 12px;
       }
       .google-btn:hover { background: #f8f9fa; }
+      .google-btn:disabled { opacity: 0.7; cursor: wait; }
       .g-icon {
         width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center;
         background: linear-gradient(135deg, #4285f4, #34a853, #fbbc04, #ea4335);
         color: white; border-radius: 50%; font-weight: bold; font-size: 14px;
       }
+      .login-err {
+        margin-top: 16px; padding: 10px 12px; font-size: 12px; color: #b91c1c;
+        background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+        text-align: left; word-break: break-word; display: none;
+        white-space: pre-wrap;
+      }
+      .login-err.show { display: block; }
       .hint { margin-top: 16px; font-size: 12px; color: var(--voyna-muted); }
     </style>
   `;
 
-  document.getElementById('google-login')!.addEventListener('click', async () => {
-    const btn = document.getElementById('google-login') as HTMLButtonElement;
+  const btn = document.getElementById('google-login') as HTMLButtonElement;
+  const errBox = document.getElementById('login-err') as HTMLDivElement;
+
+  btn.addEventListener('click', async () => {
+    errBox.classList.remove('show');
+    errBox.textContent = '';
     btn.disabled = true;
     btn.textContent = '로그인 중...';
     try {
-      await loginWithGoogle();
-      // redirect 방식: 이 줄 이후 페이지가 Google로 이동했다가 돌아옴.
-      // 돌아왔을 때 main.ts의 handleRedirectResult가 처리.
-    } catch (e) {
+      await loginWithGoogle((msg) => {
+        errBox.textContent = msg;
+        errBox.classList.add('show');
+      });
+      // Popup 성공 시: onAuthStateChanged가 router를 재초기화하도록 페이지를 새로고침
+      // (가장 단순하고 견고한 방식)
+      window.location.reload();
+    } catch {
       btn.disabled = false;
       btn.innerHTML = '<span class="g-icon">G</span> Google로 시작하기';
-      alert('로그인 실패: ' + (e as Error).message);
     }
   });
 }
